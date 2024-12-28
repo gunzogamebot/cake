@@ -1,0 +1,110 @@
+<?php 
+
+    session_start();
+    require_once 'config/db.php';
+    if (!isset($_SESSION['user_login'])) {
+        $_SESSION['error'] = 'กรุณาเข้าสู่ระบบ';
+        header('location: user.php');
+    }
+
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ร้านเค้กโฮมเมด</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="index1.css">
+    <link rel="stylesheet" href="order.css">
+    <link rel="stylesheet" href="login.css">
+    <style>
+        body {
+          background-color: burlywood; /* กำหนดสีพื้นหลังเป็น #F0F0F0 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background">
+        <!-- home -->
+        <nav>
+            <div class="container">
+                <div class="nav-con">
+                    <div class="logo">
+                        <a href="">ร้าน ขะ-หนม-ตุ้ย</a>
+                    </div>
+                    <ul class="menu">
+                        <li><a href="#"></a></li>
+                        <li><a href="#"></a></li>
+                        <li><a href="userreport.php">สถานะการสั่งทำ</a></li>
+                        <li><a href="list.php">ตะกร้าสินค้า</a></li>
+                        <?php 
+                        
+                            if (isset($_SESSION['user_login'])) {
+                                $user_id = $_SESSION['user_login'];
+                                $stmt = $conn->query("SELECT * FROM users WHERE id = $user_id");
+                                $stmt->execute();
+                                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                            }
+                        
+                        ?>
+                        <li><a href="">ลูกค้า: <?php echo $row['firstname'] . ' ' . $row['lastname'] ?> </a></li>
+                        <a href="logout.php" class="btn btn-primary" id="register">ออกจากระบบ</a>
+                    </ul>
+                </div>
+            </div>
+        </nav><br>
+
+        <div class="container text-center">
+        <h2>รายการสินค้า</h2><br>
+        </div>
+        <div class="container">
+        <div class="row">
+            <?php 
+                $select_stmt = $conn->prepare('SELECT * FROM tbl_cake');
+                $select_stmt->execute();
+
+                while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+            ?>
+            <div class="col-sm-1 col=md-3 col-lg-4">
+            <div class="card border-Light mb-3">
+            <img src="image/<?php echo $row['image']; ?>" width="auto" height="300px" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h3 class="card-text"><?php echo $row['cake_name']; ?></h3>
+                <p class="card-text"><h5>รายละเอียด : </h5><?php echo $row['cake_details']; ?></p>
+                <h4 class="card-text">ราคา : <?php echo $row['cake_price']; ?> บาท</h4>
+                <hr class="my-3">
+                <a href="addorder.php?update_id=<?php echo $row['cake_id']; ?>" class="btn btn-success">สั่งทำ</a>
+            </div>
+            </div>
+            </div>
+            <?php } ?>
+        </div>
+        </div>
+
+        <div class="container">
+        <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+        
+            <p>
+            ช่องทางการติดต่อ :<br>    
+            © เบอร์โทร 092-796-5160 <br>
+            @ Facebook : Natthaphon niamnuam <br>
+            @ LINE : Natthaphon niamnuam</p>   
+            <ul class="list-unstyled d-flex">
+                <li class="ms-3"><p></p></a></li>
+                <li class="ms-3"><p></p></a></li>
+            </ul>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
